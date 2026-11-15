@@ -1,18 +1,52 @@
+
 def parse_member_id(member_id):
-    member_type, number = member_id.split('-')
-    return member_type.upper(), int(number)
+    if not isinstance(member_id, str):
+        raise ValueError("Member ID must be a string")
+
+    parts = member_id.split('-')
+
+    if len(parts) != 2:
+        raise ValueError("Member ID must contain exactly one hyphen")
+
+    member_type, number = parts
+
+    if not member_type.strip() or not number.strip().isdigit():
+        raise ValueError("Invalid member ID")
+
+    return member_type.strip().upper(), int(number.strip())
+
 
 def total_fine(days_csv):
-    days = [int(d) for d in days_csv.split(',')]
+    if not isinstance(days_csv, str) or not days_csv.strip():
+        raise ValueError("Days must be a non-empty CSV string")
+
+    try:
+        days = [int(d.strip()) for d in days_csv.split(',')]
+    except ValueError:
+        raise ValueError("Days must contain valid integers")
+
+    if any(d < 0 for d in days):
+        raise ValueError("Days cannot be negative")
+
     fine = 0
     for d in days:
         if d > 14:
             fine += (d - 14) * 2
+
     return fine
 
+
 def shelf_code(title):
+    if not isinstance(title, str):
+        raise ValueError("Title must be a string")
+
     words = title.split()
+
+    if len(words) < 2:
+        raise ValueError("Title must contain at least two words")
+
     return (words[0][0] + words[1][0]).upper()
+
 
 def main():
     print("==== Running parse_member_id ====")
